@@ -589,9 +589,9 @@ body.tema-touchofpink.pink-claro .col-puesto{color:#eeaad8;}
 
 <div class="tabs-bar">
   <button class="tab-btn active" onclick="showTab('pantalla')" id="tbtn-pantalla">Pantalla <span class="dot"></span></button>
-  <button class="tab-btn tab-btn-caja" onclick="showTab('caja1')" id="tbtn-caja1">Caja 1</button>
-  <button class="tab-btn tab-btn-caja" onclick="showTab('caja2')" id="tbtn-caja2">Caja 2</button>
-  <button class="tab-btn tab-btn-caja" onclick="showTab('caja3')" id="tbtn-caja3">Caja 3</button>
+  <button class="tab-btn tab-btn-caja" onclick="showTab('caja1')" id="tbtn-caja1">Abajo</button>
+  <button class="tab-btn tab-btn-caja" onclick="showTab('caja2')" id="tbtn-caja2">Extendido</button>
+  <button class="tab-btn tab-btn-caja" onclick="showTab('caja3')" id="tbtn-caja3">VIP</button>
   <button class="tab-btn tab-btn-caja" onclick="showTab('config')" id="tbtn-config">Tarjetas</button>
   <button class="tab-btn tab-btn-caja" onclick="showTab('stats')" id="tbtn-stats">📊 Stats</button>
   <button class="tab-btn tab-btn-caja" onclick="showTab('custom')" id="tbtn-custom">Diseño</button>
@@ -2936,7 +2936,7 @@ function renderStats() {
   const opsCaja = {1:0, 2:0, 3:0};
   txData.forEach(t=>{ if(t.caja>=1&&t.caja<=3){porCaja[t.caja]+=t.amount;opsCaja[t.caja]++;} });
   const cajasColors = ['#c9a227','#e8c84a','#7a6010'];
-  const cajasLabels = ['Caja 1','Caja 2','Caja 3'];
+  const cajasLabels = ['Abajo','Extendido','VIP'];
   drawBarChart('chart-cajas', [porCaja[1],porCaja[2],porCaja[3]], cajasLabels, cajasColors);
   document.getElementById('legend-cajas').innerHTML = cajasLabels.map((l,i)=>
     `<div class="legend-item"><div class="legend-dot" style="background:${cajasColors[i]}"></div>${l}: ${fmt(porCaja[i+1])} (${opsCaja[i+1]} ops)</div>`
@@ -3962,7 +3962,7 @@ function renderGeneral() {
   if(chartCajas) chartCajas.destroy();
   chartCajas = new Chart(document.getElementById('chart-cajas-total'),{
     type:'doughnut',
-    data:{labels:['Caja 1','Caja 2','Caja 3'],datasets:[{data:cajasTotals,backgroundColor:CAJA_COLORS,borderColor:'#080808',borderWidth:3}]},
+    data:{labels:['Abajo','Extendido','VIP'],datasets:[{data:cajasTotals,backgroundColor:CAJA_COLORS,borderColor:'#080808',borderWidth:3}]},
     options:{
       plugins:{
         legend:{position:'bottom',labels:{color:'#e0ddd0',font:{size:13},padding:16,boxWidth:14}},
@@ -4493,7 +4493,7 @@ def export_excel():
     ws2.sheet_properties.tabColor = 'C9A227'
     ws2['A1'] = 'HISTORIAL DE NOCHES'; ws2['A1'].font = f_ti
 
-    COLS_N = ['Fecha', 'Cierre', 'Total ($)', 'Ops', '1°', '2°', '3°', 'Caja 1', 'Caja 2', 'Caja 3']
+    COLS_N = ['Fecha', 'Cierre', 'Total ($)', 'Ops', '1°', '2°', '3°', 'Abajo', 'Extendido', 'VIP']
     set_hdr(ws2, 3, 1, COLS_N)
     r2 = 4
     for idx, n in enumerate(reversed(historial)):
@@ -4672,7 +4672,7 @@ def export_gsheets():
     try:
         ws_noches = safe_sheet('Noches')
         ws_noches.clear()
-        n_header = [['Fecha', 'Cierre', 'Total ($)', 'Ops', '1°', '2°', '3°', 'Caja 1', 'Caja 2', 'Caja 3']]
+        n_header = [['Fecha', 'Cierre', 'Total ($)', 'Ops', '1°', '2°', '3°', 'Abajo', 'Extendido', 'VIP']]
         n_rows = []
         for n in reversed(historial):
             rnk = n.get('ranking', [])
@@ -4696,7 +4696,7 @@ def export_gsheets():
             pc = noche.get('por_caja', {})
             rows = [
                 [f"NOCHE {noche['fecha']} — cierre {noche.get('hora_cierre','?')} — Total: ${noche['total']:,.0f}".replace(',','.')],
-                [f"Caja 1: ${pc.get(1,pc.get('1',0)):,.0f}  |  Caja 2: ${pc.get(2,pc.get('2',0)):,.0f}  |  Caja 3: ${pc.get(3,pc.get('3',0)):,.0f}".replace(',','.')],
+                [f"Abajo: ${pc.get(1,pc.get('1',0)):,.0f}  |  Extendido: ${pc.get(2,pc.get('2',0)):,.0f}  |  VIP: ${pc.get(3,pc.get('3',0)):,.0f}".replace(',','.')],
                 [],
                 ['RANKING', '', '', ''],
                 ['#', 'Nombre', 'Mesa', 'Total ($)'],
