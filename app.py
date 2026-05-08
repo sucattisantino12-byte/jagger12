@@ -13,7 +13,7 @@ def load_config():
                 return json.load(f)
         except Exception:
             pass
-    return {'password': '1212'}
+    return {'password': '1212', 'pin_caja1': '1234', 'pin_caja2': '1234', 'pin_caja3': '1234', 'pin_diseno': '1212', 'pin_tarjetas': '1234'}
 
 def save_config(cfg):
     try:
@@ -102,6 +102,7 @@ body.modo-presentacion .tab-btn-caja{display:none;}
 body.modo-presentacion .status-bar{display:none;}
 body.modo-presentacion .config-panel{display:none;}
 body.modo-presentacion .tabs-bar{display:none;}
+body.modo-presentacion .btn-pres-wrap{display:none;}
 
 .screen{display:none;padding:22px 26px 70px;}
 .screen.active{display:block;}
@@ -128,6 +129,19 @@ body.modo-presentacion .tabs-bar{display:none;}
 .pres-clock-time{font-family:'Oswald',sans-serif;font-size:32px;color:#ffffff;font-weight:700;line-height:1.1;}
 .pres-clock-fin{font-size:11px;color:var(--gold-dim);letter-spacing:1px;margin-top:6px;text-transform:uppercase;}
 .pres-clock-fin-val{font-family:'Oswald',sans-serif;font-size:26px;color:var(--gold);font-weight:700;line-height:1.1;display:block;}
+/* Tamaños de reloj */
+.clock-small .pres-clock-hora{font-size:10px;}
+.clock-small .pres-clock-time{font-size:32px;}
+.clock-small .pres-clock-fin{font-size:9px;}
+.clock-small .pres-clock-fin-val{font-size:26px;}
+.clock-medium .pres-clock-hora{font-size:16px;}
+.clock-medium .pres-clock-time{font-size:52px;}
+.clock-medium .pres-clock-fin{font-size:14px;}
+.clock-medium .pres-clock-fin-val{font-size:42px;}
+.clock-normal .pres-clock-hora{font-size:20px;}
+.clock-normal .pres-clock-time{font-size:72px;}
+.clock-normal .pres-clock-fin{font-size:17px;}
+.clock-normal .pres-clock-fin-val{font-size:58px;}
 .pres-header{text-align:center;padding-top:8px;}
 .pres-logo{font-family:'Oswald',sans-serif;font-size:52px;font-weight:700;color:var(--white);letter-spacing:10px;text-transform:uppercase;display:block;width:100%;}
 .pres-logo .vip{color:var(--gold);}
@@ -181,8 +195,8 @@ body.modo-presentacion .tabs-bar{display:none;}
 .rank-row.rank-1 .col-total{font-size:38px;}
 .miles-lbl{font-size:0.45em;opacity:0.55;letter-spacing:2px;margin-left:5px;vertical-align:middle;font-weight:600;}
 
-.btn-exit-float{display:none;position:fixed;top:12px;left:16px;z-index:9999;background:transparent;color:#1c1c1c;border:none;font-size:22px;font-family:'Oswald',sans-serif;font-weight:300;cursor:pointer;padding:4px 8px;transition:color .3s;line-height:1;}
-.btn-exit-float:hover{color:#555;}
+.btn-exit-float{display:none;position:fixed;top:14px;right:18px;left:auto;z-index:9999;background:transparent;color:#222;border:none;font-size:18px;font-family:'Oswald',sans-serif;font-weight:300;cursor:pointer;padding:6px 10px;transition:color .3s;line-height:1;letter-spacing:0;}
+.btn-exit-float:hover{color:#666;}
 body.modo-presentacion .btn-exit-float{display:block;}
 .empty-msg{text-align:center;color:#222;font-size:15px;padding:70px 20px;letter-spacing:2px;font-family:'Oswald',sans-serif;}
 
@@ -589,38 +603,19 @@ body.tema-touchofpink.pink-claro .col-puesto{color:#eeaad8;}
 
 <div class="tabs-bar">
   <button class="tab-btn active" onclick="showTab('pantalla')" id="tbtn-pantalla">Pantalla <span class="dot"></span></button>
-  <button class="tab-btn tab-btn-caja" onclick="showTab('caja1')" id="tbtn-caja1">Abajo</button>
-  <button class="tab-btn tab-btn-caja" onclick="showTab('caja2')" id="tbtn-caja2">Extendido</button>
-  <button class="tab-btn tab-btn-caja" onclick="showTab('caja3')" id="tbtn-caja3">VIP</button>
-  <button class="tab-btn tab-btn-caja" onclick="showTab('config')" id="tbtn-config">Tarjetas</button>
-  <button class="tab-btn tab-btn-caja" onclick="showTab('stats')" id="tbtn-stats">📊 Stats</button>
-  <button class="tab-btn tab-btn-caja" onclick="showTab('custom')" id="tbtn-custom">Diseño</button>
+  <button class="tab-btn tab-btn-caja" onclick="pedirPinCaja('caja1','Abajo')" id="tbtn-caja1">Abajo</button>
+  <button class="tab-btn tab-btn-caja" onclick="pedirPinCaja('caja2','Extendido')" id="tbtn-caja2">Extendido</button>
+  <button class="tab-btn tab-btn-caja" onclick="pedirPinCaja('caja3','VIP')" id="tbtn-caja3">VIP</button>
+  <button class="tab-btn tab-btn-caja" onclick="pedirPinTarjetas()" id="tbtn-config">Tarjetas</button>
+  <button class="tab-btn tab-btn-caja" onclick="pedirPinStats()" id="tbtn-stats">📊 Stats</button>
+  <button class="tab-btn tab-btn-caja" onclick="pedirPinDiseno()" id="tbtn-custom">Configuracion</button>
 </div>
 
 <!-- PANTALLA -->
 <div id="tab-pantalla" class="screen active">
-  <div class="config-panel">
-    <div class="config-title">Configuracion de pantalla</div>
-    <div class="config-row">
-      <span class="config-label">Premio:</span>
-      <input class="config-input wide" id="msg-input" type="text" placeholder="Ej: El ganador se lleva una botella gratis" oninput="updateMsg()" />
-      <select class="config-input" id="premio-size" onchange="updatePremioSize()" title="Tamaño del texto del premio" style="width:auto;padding:8px 10px;">
-        <option value="16px">Chico</option>
-        <option value="22px" selected>Normal</option>
-        <option value="30px">Grande</option>
-        <option value="42px">Muy grande</option>
-        <option value="56px">Enorme</option>
-      </select>
-      <button class="btn-pres" onclick="activarPresentacion()">Modo Presentacion</button>
-      <button class="btn-reset" onclick="resetNoche()">Resetear noche</button>
-      <button onclick="cerrarNoche()" style="background:transparent;color:#3a9a5a;border:1px solid #1a3a2a;border-radius:6px;padding:9px 16px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;white-space:nowrap;transition:all .15s;" onmouseover="this.style.borderColor='#3a9a5a'" onmouseout="this.style.borderColor='#1a3a2a'">💾 Cerrar noche</button>
 
-    </div>
-    <div class="config-row">
-      <span class="config-label">Hora de finalizacion:</span>
-      <input class="config-input narrow" id="hora-fin-input" type="time" value="05:30" oninput="updateHoraFin()" />
-      <button class="btn-show-winner" onclick="mostrarGanadorManual()">🏆 Mostrar Ganador Ahora</button>
-    </div>
+  <div class="btn-pres-wrap" style="padding:14px 26px 0;display:flex;justify-content:flex-end;">
+    <button class="btn-pres" onclick="activarPresentacion()">Modo Presentacion</button>
   </div>
 
   <div class="pres-header-wrap">
@@ -652,7 +647,7 @@ body.tema-touchofpink.pink-claro .col-puesto{color:#eeaad8;}
   <div id="credit-pres" style="text-align:center;margin-top:18px;color:#2a2a2a;font-family:'Rajdhani',sans-serif;font-size:13px;letter-spacing:2px;">Made by Santino Sucatti</div>
 </div>
 
-<button class="btn-exit-float" onclick="salirPresentacion()">&lt;</button>
+<button class="btn-exit-float" onclick="salirPresentacion()" title="Salir presentacion">&#x2715;</button>
 
 <!-- CAJAS -->
 <div id="tab-caja1" class="screen"><div id="caja-inner-1"></div></div>
@@ -686,11 +681,47 @@ body.tema-touchofpink.pink-claro .col-puesto{color:#eeaad8;}
   </div>
 </div>
 
-<!-- ══ PANEL PERSONALIZACION ══ -->
+<!-- ══ PANEL CONFIGURACION ══ -->
 <div id="tab-custom" class="screen">
   <div class="conf-header">
-    <div class="conf-title">🎨 Personalización</div>
-    <div class="conf-sub">Cambia colores, textos y nombres del club. Los cambios se aplican en tiempo real.</div>
+    <div class="conf-title">⚙️ Configuracion</div>
+    <div class="conf-sub">Control de la noche, diseño y ajustes. Los cambios se aplican en tiempo real.</div>
+  </div>
+
+  <!-- ── CONTROL DE PANTALLA ── -->
+  <div class="custom-section">
+    <div class="custom-section-title">🎬 Control de pantalla</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:14px;">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span class="config-label" style="white-space:nowrap;">Premio:</span>
+        <input class="config-input wide" id="msg-input" type="text" placeholder="Ej: El ganador se lleva una botella gratis" oninput="updateMsg()" style="flex:1;min-width:200px;" />
+        <select class="config-input" id="premio-size" onchange="updatePremioSize()" style="width:auto;padding:8px 10px;">
+          <option value="16px">Chico</option>
+          <option value="22px" selected>Normal</option>
+          <option value="30px">Grande</option>
+          <option value="42px">Muy grande</option>
+          <option value="56px">Enorme</option>
+        </select>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span class="config-label" style="white-space:nowrap;">Hora de finalizacion:</span>
+        <input class="config-input narrow" id="hora-fin-input" type="time" value="05:30" oninput="updateHoraFin()" />
+        <button class="btn-show-winner" onclick="mostrarGanadorManual()">🏆 Mostrar Ganador Ahora</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span class="config-label" style="white-space:nowrap;">Tamaño del reloj:</span>
+        <select class="config-input" id="clock-size-select" onchange="updateClockSize()" style="width:auto;padding:8px 10px;">
+          <option value="small">Pequeño</option>
+          <option value="medium">Mediano</option>
+          <option value="normal">Normal</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn-pres" onclick="activarPresentacion()">Modo Presentacion</button>
+        <button class="btn-reset" onclick="resetNoche()">Resetear noche</button>
+        <button onclick="cerrarNoche()" style="background:transparent;color:#3a9a5a;border:1px solid #1a3a2a;border-radius:6px;padding:9px 16px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;white-space:nowrap;transition:all .15s;" onmouseover="this.style.borderColor='#3a9a5a'" onmouseout="this.style.borderColor='#1a3a2a'">💾 Cerrar noche</button>
+      </div>
+    </div>
   </div>
 
   <!-- Temas especiales -->
@@ -854,17 +885,42 @@ body.tema-touchofpink.pink-claro .col-puesto{color:#eeaad8;}
     <button class="btn-custom-reset" onclick="resetPersonalizacion()">Restaurar defaults</button>
   </div>
 
-  <!-- Contraseña -->
+  <!-- Gestión de PINs -->
   <div class="custom-section" style="margin-top:18px;">
-    <div class="custom-section-title">🔒 Contraseña de acceso</div>
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;">
-      <input id="pwd-actual" type="password" placeholder="PIN actual (4 dígitos)" class="custom-text-input" maxlength="4" inputmode="numeric" pattern="[0-9]*" />
-      <input id="pwd-nueva" type="password" placeholder="Nuevo PIN (4 dígitos)" class="custom-text-input" maxlength="4" inputmode="numeric" pattern="[0-9]*" />
-      <input id="pwd-confirm" type="password" placeholder="Confirmar nuevo PIN" class="custom-text-input" maxlength="4" inputmode="numeric" pattern="[0-9]*" />
-      <button onclick="cambiarPassword()" style="background:#c9a227;color:#000;border:none;border-radius:6px;padding:10px 16px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='#e8c84a'" onmouseout="this.style.background='#c9a227'">Cambiar contraseña</button>
-      <div id="pwd-msg" style="font-family:'Rajdhani',sans-serif;font-size:13px;letter-spacing:1px;min-height:18px;"></div>
+    <div class="custom-section-title">🔒 Gestión de PINs</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;">
+      <div style="font-family:'Rajdhani',sans-serif;font-size:12px;color:#666;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">PIN de Diseño actual (requerido para guardar)</div>
+      <input id="pin-mgr-current" type="password" placeholder="PIN actual de Diseño" class="custom-text-input" maxlength="4" inputmode="numeric" pattern="[0-9]*" />
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
+          <div style="font-size:11px;color:#555;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;">Nuevo PIN — Abajo</div>
+          <input id="pin-mgr-caja1" type="password" placeholder="4 dígitos" class="custom-text-input" maxlength="4" inputmode="numeric" pattern="[0-9]*" />
+        </div>
+        <div>
+          <div style="font-size:11px;color:#555;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;">Nuevo PIN — Extendido</div>
+          <input id="pin-mgr-caja2" type="password" placeholder="4 dígitos" class="custom-text-input" maxlength="4" inputmode="numeric" pattern="[0-9]*" />
+        </div>
+        <div>
+          <div style="font-size:11px;color:#555;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;">Nuevo PIN — VIP</div>
+          <input id="pin-mgr-caja3" type="password" placeholder="4 dígitos" class="custom-text-input" maxlength="4" inputmode="numeric" pattern="[0-9]*" />
+        </div>
+        <div>
+          <div style="font-size:11px;color:#555;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;">Nuevo PIN — Tarjetas</div>
+          <input id="pin-mgr-tarjetas" type="password" placeholder="4 dígitos" class="custom-text-input" maxlength="4" inputmode="numeric" pattern="[0-9]*" />
+        </div>
+        <div>
+          <div style="font-size:11px;color:#555;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;">Nuevo PIN — Configuracion</div>
+          <input id="pin-mgr-diseno" type="password" placeholder="4 dígitos" class="custom-text-input" maxlength="4" inputmode="numeric" pattern="[0-9]*" />
+        </div>
+      </div>
+      <div style="font-size:11px;color:#444;letter-spacing:1px;line-height:1.5;">Dejá vacío los que no querés cambiar. Solo se actualizan los que completás.</div>
+      <button onclick="cambiarTodosLosPins()" style="background:#c9a227;color:#000;border:none;border-radius:6px;padding:11px 16px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='#e8c84a'" onmouseout="this.style.background='#c9a227'">💾 Guardar PINs</button>
+      <div id="pin-mgr-msg" style="font-family:'Rajdhani',sans-serif;font-size:13px;letter-spacing:1px;min-height:18px;"></div>
+
     </div>
   </div>
+  <!-- Hidden compat inputs -->
+  <input id="pwd-actual" type="hidden" /><input id="pwd-nueva" type="hidden" /><input id="pwd-confirm" type="hidden" /><div id="pwd-msg" style="display:none"></div>
 </div>
 
 <!-- ══ PANEL STATS ══ -->
@@ -1020,11 +1076,11 @@ body.tema-touchofpink.pink-claro .col-puesto{color:#eeaad8;}
 </div>
 
 <!-- ══ MODAL LOGIN ══ -->
+<!-- LOGIN MODAL PRINCIPAL (acceso general) -->
 <div id="login-modal" style="display:flex;position:fixed;inset:0;z-index:99999;background:#000;align-items:center;justify-content:center;flex-direction:column;">
   <div style="background:#111;border:1px solid #2a2a2a;border-radius:14px;padding:36px 32px;width:min(340px,90vw);text-align:center;">
     <div style="font-family:'Oswald',sans-serif;font-size:30px;color:#c9a227;letter-spacing:4px;margin-bottom:4px;">RANKING VIP</div>
     <div style="font-family:'Rajdhani',sans-serif;font-size:12px;color:#333;letter-spacing:4px;text-transform:uppercase;margin-bottom:28px;">JAGGER CLUB</div>
-    <!-- PIN dots -->
     <div style="display:flex;justify-content:center;gap:14px;margin-bottom:24px;">
       <div class="pin-dot" id="pin-d0"></div>
       <div class="pin-dot" id="pin-d1"></div>
@@ -1032,7 +1088,6 @@ body.tema-touchofpink.pink-claro .col-puesto{color:#eeaad8;}
       <div class="pin-dot" id="pin-d3"></div>
     </div>
     <div id="login-error" style="color:#a83030;font-family:'Rajdhani',sans-serif;font-size:13px;letter-spacing:1px;margin-bottom:16px;min-height:18px;"></div>
-    <!-- Keypad -->
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
       <button class="pin-key" onclick="pinPress('1')">1</button>
       <button class="pin-key" onclick="pinPress('2')">2</button>
@@ -1043,10 +1098,40 @@ body.tema-touchofpink.pink-claro .col-puesto{color:#eeaad8;}
       <button class="pin-key" onclick="pinPress('7')">7</button>
       <button class="pin-key" onclick="pinPress('8')">8</button>
       <button class="pin-key" onclick="pinPress('9')">9</button>
-      <button class="pin-key" onclick="pinBack()" style="color:#888;">⌫</button>
+      <button class="pin-key" onclick="pinBack()" style="color:#888;">&#x232B;</button>
       <button class="pin-key" onclick="pinPress('0')">0</button>
-      <button class="pin-key" onclick="checkLogin()" style="background:#1a1a1a;color:#c9a227;">✓</button>
+      <button class="pin-key" onclick="checkLogin()" style="background:#1a1a1a;color:#c9a227;">&#x2713;</button>
     </div>
+  </div>
+</div>
+
+<!-- MODAL PIN PARA CAJAS / DISENO -->
+<div id="caja-pin-modal" style="display:none;position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,0.92);align-items:center;justify-content:center;flex-direction:column;">
+  <div style="background:#111;border:1px solid #2a2a2a;border-radius:14px;padding:32px 28px;width:min(320px,90vw);text-align:center;">
+    <div id="caja-pin-titulo" style="font-family:'Oswald',sans-serif;font-size:20px;color:#c9a227;letter-spacing:3px;margin-bottom:4px;text-transform:uppercase;">BARRA</div>
+    <div style="font-family:'Rajdhani',sans-serif;font-size:11px;color:#444;letter-spacing:3px;text-transform:uppercase;margin-bottom:22px;">Ingresá el PIN</div>
+    <div style="display:flex;justify-content:center;gap:14px;margin-bottom:20px;">
+      <div class="pin-dot" id="cpin-d0"></div>
+      <div class="pin-dot" id="cpin-d1"></div>
+      <div class="pin-dot" id="cpin-d2"></div>
+      <div class="pin-dot" id="cpin-d3"></div>
+    </div>
+    <div id="caja-pin-error" style="color:#a83030;font-family:'Rajdhani',sans-serif;font-size:13px;letter-spacing:1px;margin-bottom:14px;min-height:18px;"></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;">
+      <button class="pin-key" onclick="cpinPress('1')">1</button>
+      <button class="pin-key" onclick="cpinPress('2')">2</button>
+      <button class="pin-key" onclick="cpinPress('3')">3</button>
+      <button class="pin-key" onclick="cpinPress('4')">4</button>
+      <button class="pin-key" onclick="cpinPress('5')">5</button>
+      <button class="pin-key" onclick="cpinPress('6')">6</button>
+      <button class="pin-key" onclick="cpinPress('7')">7</button>
+      <button class="pin-key" onclick="cpinPress('8')">8</button>
+      <button class="pin-key" onclick="cpinPress('9')">9</button>
+      <button class="pin-key" onclick="cpinBack()" style="color:#888;">&#x232B;</button>
+      <button class="pin-key" onclick="cpinPress('0')">0</button>
+      <button class="pin-key" onclick="checkCajaPin()" style="background:#1a1a1a;color:#c9a227;">&#x2713;</button>
+    </div>
+    <button onclick="cancelarCajaPin()" style="background:none;border:none;color:#333;font-family:'Rajdhani',sans-serif;font-size:13px;letter-spacing:1px;cursor:pointer;text-transform:uppercase;padding:6px;">Cancelar</button>
   </div>
 </div>
 <style>
@@ -1942,8 +2027,17 @@ function showTab(id) {
   if (id === 'custom') buildColorGrid();
   if (id === 'stats') { setTimeout(renderStats, 50); } // timeout para que el canvas tenga ancho
 }
-function activarPresentacion() { document.body.classList.add('modo-presentacion'); showTab('pantalla'); }
-function salirPresentacion() { document.body.classList.remove('modo-presentacion'); }
+function activarPresentacion() {
+  document.body.classList.add('modo-presentacion');
+  const wrap = document.querySelector('.btn-pres-wrap');
+  if(wrap) wrap.style.display='none';
+  showTab('pantalla');
+}
+function salirPresentacion() {
+  document.body.classList.remove('modo-presentacion');
+  const wrap = document.querySelector('.btn-pres-wrap');
+  if(wrap) wrap.style.display='';
+}
 function updateMsg() {
   const val = document.getElementById('msg-input').value.trim();
   document.getElementById('premio-box').textContent = val;
@@ -1960,6 +2054,15 @@ function updateHoraFin() {
   const el = document.getElementById('clock-fin');
   if (el) el.textContent = horaFin;
   fetch('/api/state',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hora_fin:horaFin})});
+}
+function updateClockSize() {
+  const sel = document.getElementById('clock-size-select');
+  if(!sel) return;
+  const size = sel.value;
+  const wrap = document.querySelector('.pres-header-wrap');
+  if(wrap) wrap.classList.remove('clock-small','clock-medium','clock-normal');
+  if(size !== 'small' && wrap) wrap.classList.add('clock-'+size);
+  try { localStorage.setItem('rankingVIP_clocksize', size); } catch(e) {}
 }function fmt(n) { return '$'+Number(n).toLocaleString('es-AR',{minimumFractionDigits:0,maximumFractionDigits:0}); }
 function fmtLabel(n){
   if(n>=1000000){const m=n/1000000;return(m%1===0?m:m.toFixed(1))+(m<2?' MILLÓN':' MILLONES');}
@@ -3675,6 +3778,8 @@ function cargarTemaGuardado() {
 // ══════════════════════════════════════════
 //  AUTH — Login y cambio de contraseña
 // ══════════════════════════════════════════
+// LOGIN PRINCIPAL
+// ══════════════════════════════════════════
 let pinValue = '';
 function pinUpdateDots() {
   for(let i=0;i<4;i++) {
@@ -3696,10 +3801,17 @@ function pinBack() {
   if(err) err.textContent='';
 }
 document.addEventListener('keydown', e=>{
-  if(document.getElementById('login-modal').style.display==='none') return;
-  if(e.key>='0'&&e.key<='9') pinPress(e.key);
-  else if(e.key==='Backspace') pinBack();
-  else if(e.key==='Enter') checkLogin();
+  const lm = document.getElementById('login-modal');
+  const cm = document.getElementById('caja-pin-modal');
+  if(lm && lm.style.display!=='none') {
+    if(e.key>='0'&&e.key<='9') pinPress(e.key);
+    else if(e.key==='Backspace') pinBack();
+    else if(e.key==='Enter') checkLogin();
+  } else if(cm && cm.style.display!=='none') {
+    if(e.key>='0'&&e.key<='9') cpinPress(e.key);
+    else if(e.key==='Backspace') cpinBack();
+    else if(e.key==='Enter') checkCajaPin();
+  }
 });
 async function checkLogin() {
   const err = document.getElementById('login-error');
@@ -3718,6 +3830,167 @@ async function checkLogin() {
 }
 if (sessionStorage.getItem('jagger_auth')==='ok') {
   document.getElementById('login-modal').style.display='none';
+}
+
+// ══════════════════════════════════════════
+// PIN POR CAJA / DISEÑO
+// ══════════════════════════════════════════
+let cpinValue = '';
+let cpinTarget = null;   // 'caja1','caja2','caja3' o 'diseno'
+let cpinLabel  = '';
+// cajas desbloqueadas en esta sesión
+const cajasDesbloqueadas = {};
+
+function cpinUpdateDots() {
+  for(let i=0;i<4;i++){
+    const d = document.getElementById('cpin-d'+i);
+    if(d) d.classList.toggle('filled', i < cpinValue.length);
+  }
+}
+function cpinPress(digit) {
+  const err = document.getElementById('caja-pin-error');
+  if(err) err.textContent='';
+  if(cpinValue.length >= 4) return;
+  cpinValue += digit;
+  cpinUpdateDots();
+  if(cpinValue.length === 4) setTimeout(checkCajaPin, 120);
+}
+function cpinBack() {
+  if(cpinValue.length > 0) { cpinValue = cpinValue.slice(0,-1); cpinUpdateDots(); }
+  const err = document.getElementById('caja-pin-error');
+  if(err) err.textContent='';
+}
+
+function pedirPinCaja(cajaId, nombre) {
+  // Si esta caja ya estaba desbloqueada, entrar directo
+  if(cajasDesbloqueadas[cajaId]) {
+    _abrirCaja(cajaId);
+    return;
+  }
+  cpinTarget = cajaId;
+  cpinLabel  = nombre;
+  cpinValue  = '';
+  cpinUpdateDots();
+  const titulo = document.getElementById('caja-pin-titulo');
+  if(titulo) titulo.textContent = nombre;
+  const err = document.getElementById('caja-pin-error');
+  if(err) err.textContent='';
+  document.getElementById('caja-pin-modal').style.display='flex';
+}
+
+function pedirPinDiseno() {
+  if(cajasDesbloqueadas['diseno']) {
+    showTab('custom');
+    return;
+  }
+  cpinTarget = 'diseno';
+  cpinLabel  = 'CONFIGURACION';
+  cpinValue  = '';
+  cpinUpdateDots();
+  const titulo = document.getElementById('caja-pin-titulo');
+  if(titulo) titulo.textContent = 'CONFIGURACION';
+  const err = document.getElementById('caja-pin-error');
+  if(err) err.textContent='';
+  document.getElementById('caja-pin-modal').style.display='flex';
+}
+
+function pedirPinTarjetas() {
+  if(cajasDesbloqueadas['tarjetas']) { showTab('config'); return; }
+  cpinTarget = 'tarjetas';
+  cpinLabel  = 'TARJETAS';
+  cpinValue  = '';
+  cpinUpdateDots();
+  const titulo = document.getElementById('caja-pin-titulo');
+  if(titulo) titulo.textContent = 'TARJETAS';
+  const err = document.getElementById('caja-pin-error');
+  if(err) err.textContent='';
+  document.getElementById('caja-pin-modal').style.display='flex';
+}
+
+function pedirPinStats() {
+  // Stats solo se abre si Configuracion ya está desbloqueada
+  if(!cajasDesbloqueadas['diseno']) {
+    showToast('Desbloqueá Configuracion primero', true);
+    return;
+  }
+  showTab('stats');
+}
+
+async function checkCajaPin() {
+  const err = document.getElementById('caja-pin-error');
+  if(cpinValue.length < 4) { if(err) err.textContent='Ingresá los 4 dígitos'; return; }
+  try {
+    let url, body;
+    if(cpinTarget === 'diseno') {
+      url = '/api/auth/diseno';
+      body = JSON.stringify({password: cpinValue});
+    } else if(cpinTarget === 'tarjetas') {
+      url = '/api/auth/tarjetas';
+      body = JSON.stringify({password: cpinValue});
+    } else {
+      const num = cpinTarget.replace('caja','');
+      url = '/api/auth/caja';
+      body = JSON.stringify({caja: num, password: cpinValue});
+    }
+    const r = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body});
+    const d = await r.json();
+    if(d.ok) {
+      cajasDesbloqueadas[cpinTarget] = true;
+      document.getElementById('caja-pin-modal').style.display='none';
+      if(cpinTarget === 'diseno') {
+        // Configuracion desbloquea todo
+        ['caja1','caja2','caja3','tarjetas','stats'].forEach(c => {
+          cajasDesbloqueadas[c] = true;
+        });
+        ['caja1','caja2','caja3'].forEach(c => {
+          const b = document.getElementById('tbtn-'+c);
+          if(b) b.style.opacity='1';
+        });
+        showTab('custom');
+      } else if(cpinTarget === 'tarjetas') {
+        showTab('config');
+      } else {
+        // Es una caja — bloquear las otras 2
+        ['caja1','caja2','caja3'].forEach(c => {
+          if(c !== cpinTarget) cajasDesbloqueadas[c] = false;
+        });
+        _abrirCaja(cpinTarget);
+      }
+      cpinValue = ''; cpinUpdateDots();
+    } else {
+      if(err) err.textContent='PIN incorrecto';
+      cpinValue=''; cpinUpdateDots();
+    }
+  } catch(e) { if(err) err.textContent='Error de conexión'; cpinValue=''; cpinUpdateDots(); }
+}
+
+function _abrirCaja(cajaId) {
+  // Bloquea las otras pestañas de caja en la barra
+  ['caja1','caja2','caja3'].forEach(c => {
+    const btn = document.getElementById('tbtn-'+c);
+    if(btn) btn.style.opacity = (c === cajaId) ? '1' : '0.3';
+  });
+  showTab(cajaId);
+}
+
+function cancelarCajaPin() {
+  document.getElementById('caja-pin-modal').style.display='none';
+  cpinValue=''; cpinUpdateDots();
+}
+
+// Desbloquear todas (solo desde Diseño)
+function desbloquearTodasCajas() {
+  ['caja1','caja2','caja3','tarjetas'].forEach(c => {
+    cajasDesbloqueadas[c] = false;
+    const key = c === 'tarjetas' ? 'config' : c;
+    const btn = document.getElementById('tbtn-'+key);
+    if(btn) btn.style.opacity='1';
+  });
+  ['caja1','caja2','caja3'].forEach(c => {
+    const btn = document.getElementById('tbtn-'+c);
+    if(btn) btn.style.opacity='1';
+  });
+  showToast('Barras y Tarjetas desbloqueadas — cada una pedirá su PIN');
 }
 
 async function cambiarPassword() {
@@ -3742,11 +4015,60 @@ async function cambiarPassword() {
   } catch(e) { msg.style.color='#a83030'; msg.textContent='Error de conexión'; }
 }
 
+async function cambiarTodosLosPins() {
+  const current = document.getElementById('pin-mgr-current').value;
+  const msg = document.getElementById('pin-mgr-msg');
+  if(!current) { msg.style.color='#a83030'; msg.textContent='Ingresá el PIN de Diseño actual'; return; }
+  const body = { current_diseno: current };
+  const campos = [
+    {id:'pin-mgr-caja1',    key:'pin_caja1',    label:'Abajo'},
+    {id:'pin-mgr-caja2',    key:'pin_caja2',    label:'Extendido'},
+    {id:'pin-mgr-caja3',    key:'pin_caja3',    label:'VIP'},
+    {id:'pin-mgr-tarjetas', key:'pin_tarjetas', label:'Tarjetas'},
+    {id:'pin-mgr-diseno',   key:'pin_diseno',   label:'Configuracion'},
+  ];
+  let alguno = false;
+  for(const c of campos) {
+    const val = (document.getElementById(c.id)||{}).value||'';
+    if(val) {
+      if(!/^\d{4}$/.test(val)) { msg.style.color='#a83030'; msg.textContent='PIN de '+c.label+' debe ser 4 dígitos'; return; }
+      body[c.key] = val;
+      alguno = true;
+    }
+  }
+  if(!alguno) { msg.style.color='#a83030'; msg.textContent='Ingresá al menos un PIN nuevo para guardar'; return; }
+  try {
+    const r = await fetch('/api/auth/change_all',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const d = await r.json();
+    if(d.ok) {
+      msg.style.color='#2ecc71'; msg.textContent='PINs actualizados correctamente';
+      campos.forEach(c=>{ const el=document.getElementById(c.id); if(el) el.value=''; });
+      document.getElementById('pin-mgr-current').value='';
+      // Resetear cajas desbloqueadas
+      Object.keys(cajasDesbloqueadas).forEach(k => cajasDesbloqueadas[k]=false);
+      ['caja1','caja2','caja3'].forEach(c=>{const b=document.getElementById('tbtn-'+c);if(b)b.style.opacity='1';});
+    } else {
+      msg.style.color='#a83030'; msg.textContent=d.error||'Error';
+    }
+  } catch(e) { msg.style.color='#a83030'; msg.textContent='Error de conexión'; }
+}
+
 // Init
 buildColorGrid();
 cargarPersonalizacionGuardada();
 cargarTemaGuardado();
 cargarEfectoGuardado();
+(function(){
+  try {
+    const sz = localStorage.getItem('rankingVIP_clocksize') || 'small';
+    const sel = document.getElementById('clock-size-select');
+    if(sel) sel.value = sz;
+    if(sz !== 'small') {
+      const wrap = document.querySelector('.pres-header-wrap');
+      if(wrap) wrap.classList.add('clock-'+sz);
+    }
+  } catch(e) {}
+})();
 for(let c=1;c<=3;c++) renderCajaInner(c);
 cargarConfTarjetas().then(()=>{loadData();setInterval(loadData,2000);setInterval(sincronizarConfTarjetas,120000);});
 </script>
@@ -4741,6 +5063,35 @@ def auth():
         return jsonify({'ok': True})
     return jsonify({'ok': False, 'error': 'Contraseña incorrecta'}), 401
 
+@app.route('/api/auth/caja', methods=['POST'])
+def auth_caja():
+    body = request.get_json() or {}
+    caja = str(body.get('caja', ''))
+    password = str(body.get('password', ''))
+    cfg = load_config()
+    key = f'pin_caja{caja}'
+    if password == str(cfg.get(key, '1234')):
+        return jsonify({'ok': True})
+    return jsonify({'ok': False, 'error': 'PIN incorrecto'}), 401
+
+@app.route('/api/auth/diseno', methods=['POST'])
+def auth_diseno():
+    body = request.get_json() or {}
+    password = str(body.get('password', ''))
+    cfg = load_config()
+    if password == str(cfg.get('pin_diseno', '1212')):
+        return jsonify({'ok': True})
+    return jsonify({'ok': False, 'error': 'PIN incorrecto'}), 401
+
+@app.route('/api/auth/tarjetas', methods=['POST'])
+def auth_tarjetas():
+    body = request.get_json() or {}
+    password = str(body.get('password', ''))
+    cfg = load_config()
+    if password == str(cfg.get('pin_tarjetas', '1234')):
+        return jsonify({'ok': True})
+    return jsonify({'ok': False, 'error': 'PIN incorrecto'}), 401
+
 @app.route('/api/auth/change', methods=['POST'])
 def auth_change():
     body = request.get_json() or {}
@@ -4753,6 +5104,23 @@ def auth_change():
     cfg['password'] = nueva
     save_config(cfg)
     return jsonify({'ok': True})
+
+@app.route('/api/auth/change_all', methods=['POST'])
+def auth_change_all():
+    body = request.get_json() or {}
+    cfg = load_config()
+    if str(body.get('current_diseno', '')) != str(cfg.get('pin_diseno', '1212')):
+        return jsonify({'ok': False, 'error': 'PIN de Diseño actual incorrecto'}), 401
+    updated = []
+    for key in ['pin_caja1', 'pin_caja2', 'pin_caja3', 'pin_diseno', 'pin_tarjetas']:
+        val = str(body.get(key, '')).strip()
+        if val:
+            if not val.isdigit() or len(val) != 4:
+                return jsonify({'ok': False, 'error': f'PIN invalido para {key}: debe ser 4 digitos'}), 400
+            cfg[key] = val
+            updated.append(key)
+    save_config(cfg)
+    return jsonify({'ok': True, 'updated': updated})
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))
